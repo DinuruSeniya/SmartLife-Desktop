@@ -1,0 +1,37 @@
+name: Build SmartLife
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.0' # Use the version of .NET you need
+
+      - name: Restore dependencies
+        run: dotnet restore SmartLife.sln
+
+      - name: Build solution
+        run: dotnet build SmartLife.sln --configuration Release
+
+      - name: Publish executable
+        run: dotnet publish SmartLife.sln --configuration Release --output ./output
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: SmartLife-executable
+          path: ./output
